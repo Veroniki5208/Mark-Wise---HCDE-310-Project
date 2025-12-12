@@ -87,6 +87,7 @@ def process_books_for_display(results, query):
         })
     return processed
 
+# this method written by ai
 def get_spotify_token():
     auth_string = f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}"
     b64_auth = base64.b64encode(auth_string.encode()).decode()
