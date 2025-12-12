@@ -45,6 +45,7 @@ def highlight_overlap(query, text):
             highlighted_words.append(w)
     return " ".join(highlighted_words)
 
+# Highlight words in text that partially match query words
 def highlight_partial(query, text, threshold=0.7):
     """Highlight words in text that partially match query words."""
     query_words = normalize(query).split()
