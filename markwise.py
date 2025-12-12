@@ -26,6 +26,7 @@ def safe_get(url, params=None):
         print(f"Request failed: {e}")
         return None
 
+# Lowercase and remove punctuation
 def normalize(text):
     """Lowercase and remove punctuation."""
     import re
