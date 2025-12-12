@@ -32,7 +32,15 @@
         {% else %}
           <p>No tracks found.</p>
         {% endfor %}
-      {% endif %}
+        {% endif %}
+
+    <form method="post" action="/export">
+        <input type="hidden" name="query" value="{{ query }}">
+        <input type="hidden" name="query_type" value="{{ query_type }}">
+        <input type="hidden" name="max_results" value="{{ max_results }}">
+    <button type="submit">Download HTML Report</button>
+</form>
+
 
       <a href="/">Search again</a>
     </div>
