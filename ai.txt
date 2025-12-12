@@ -1,0 +1,10 @@
+How I used AI in this project:
+
+I asked AI on how to hide the client id and client secret from github.
+It gave me instructions and I followed the instructions by adding the .env file
+to .gitignore. It also helped me load the client id and secret and use it in my markwise file
+using dotenv. It also gave me how to integrate the spotify token into my code. I copy and
+pasted the get_spotify_token method from ai.
+
+Other than that, I did not use ai for this project.
+
