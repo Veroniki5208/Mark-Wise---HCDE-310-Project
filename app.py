@@ -58,9 +58,10 @@ def export():
     <head>
         <title>Mark-Wise Report for {query}</title>
         <style>
-            body {{ font-family: Arial, sans-serif; padding: 20px; }}
+            body {{ font-family: Arial, sans-serif; padding: 20px; 
+            justify-content: center;align-items: center}}
             h1 {{ text-align: center; }}
-            .result {{ border: 1px solid #ccc; padding: 10px; margin: 5px 0; }}
+            .result {{ border: 1px solid #ccc; padding: 10px; margin: 5px}}
             mark {{ background-color: yellow; }}
         </style>
     </head>
