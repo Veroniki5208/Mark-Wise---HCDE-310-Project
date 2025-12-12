@@ -32,6 +32,7 @@ def normalize(text):
     import re
     return re.sub(r"[^\w\s]", "", (text or "").lower())
 
+# Highlight exact words in text that appear in query
 def highlight_overlap(query, text):
     """Highlight exact words in text that appear in query."""
     query_words = normalize(query).split()
