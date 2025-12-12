@@ -1,5 +1,5 @@
 # Mark-Wise---HCDE-310-Project
-A web app that checks for trademarks and similarities in names and phrases
+A web app that checks for similarities in names and phrases of book titles, song titles, and lyrics.
 
 
 This project uses the Spotify API. To run the code:
