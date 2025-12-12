@@ -98,7 +98,7 @@ def get_spotify_token():
     return r.json()["access_token"]
 
 # search Spotify tracks
-def search_spotify(query, limit=5, offset=0):
+def search_spotify(query, limit=5):
     token = get_spotify_token()
     headers = {"Authorization": f"Bearer {token}"}
     params = {"q": query, "type": "track", "limit": limit}
