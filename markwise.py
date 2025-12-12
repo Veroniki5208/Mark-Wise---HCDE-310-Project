@@ -20,7 +20,7 @@ def safe_get(url, params=None):
 
 def search_books(title, max_results=5):
     base_url = "https://www.googleapis.com/books/v1/volumes"
-    params = {"q": f"intitle:{title}", "maxResults": 5} #show the first 5 results
+    params = {"q": f"intitle:{title}", "maxResults": max_results}
     data = safe_get(base_url, params)
     return data.get("items", []) if data else [] # return a list of findings
 
