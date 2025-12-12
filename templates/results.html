@@ -2,36 +2,39 @@
 <html>
 <head>
   <title>Similarity Results</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Results for "{{ query }}"</h1>
+    <div class="container">
+        <h1>Results for "{{ query }}"</h1>
 
-    {% if query_type == "book" %}
-        <h2>Books</h2>
-    {% for book in results %}
-        <div style="border:1px solid #ccc; margin:5px; padding:5px;">
-        <strong>{{ book.title }}</strong> by {{ book.authors }}<br>
-        Similarity: {{ book.similarity }}%<br>
-        Highlighted: {{ book.highlight|safe }}<br>
-        <a href="{{ book.infoLink }}" target="_blank">Book link</a>
-        </div>
-    {% else %}
-        <p>No books found.</p>
-    {% endfor %}
-    {% else %}
-    <h2>Spotify Tracks</h2>
-    {% for track in results %}
-        <div style="border:1px solid #ccc; margin:5px; padding:5px;">
-        <strong>{{ track.title }}</strong> by {{ track.artists }}<br>
-        Similarity: {{ track.similarity }}%<br>
-        Highlighted: {{ track.highlight|safe }}<br>
-        <a href="{{ track.spotify_url }}" target="_blank">Spotify link</a>
-        </div>
-    {% else %}
-      <p>No tracks found.</p>
-    {% endfor %}
-  {% endif %}
+        {% if query_type == "book" %}
+            <h2>Books</h2>
+        {% for book in results %}
+            <div style="border:1px solid #ccc; margin:5px; padding:5px;">
+            <strong>{{ book.title }}</strong> by {{ book.authors }}<br>
+            Similarity: {{ book.similarity }}%<br>
+            Highlighted: {{ book.highlight|safe }}<br>
+            <a href="{{ book.infoLink }}" target="_blank">Book link</a>
+            </div>
+        {% else %}
+            <p>No books found.</p>
+        {% endfor %}
+        {% else %}
+        <h2>Spotify Tracks</h2>
+        {% for track in results %}
+            <div style="border:1px solid #ccc; margin:5px; padding:5px;">
+            <strong>{{ track.title }}</strong> by {{ track.artists }}<br>
+            Similarity: {{ track.similarity }}%<br>
+            Highlighted: {{ track.highlight|safe }}<br>
+            <a href="{{ track.spotify_url }}" target="_blank">Spotify link</a>
+            </div>
+        {% else %}
+          <p>No tracks found.</p>
+        {% endfor %}
+      {% endif %}
 
-  <a href="/">Search again</a>
+      <a href="/">Search again</a>
+    </div>
 </body>
 </html>
