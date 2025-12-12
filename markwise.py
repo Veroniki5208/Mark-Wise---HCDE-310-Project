@@ -8,6 +8,14 @@ MarkWise prototype
 
 import urllib.parse, urllib.request, urllib.error, json
 import requests
+import os
+import base64
+from difflib import SequenceMatcher
+from dotenv import load_dotenv
+
+load_dotenv()
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 
 def safe_get(url, params=None):
     try:
