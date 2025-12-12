@@ -58,7 +58,7 @@ def highlight_partial(query, text, threshold=0.7):
             highlighted_words.append(w)
     return " ".join(highlighted_words)
 
-def search_books(title, max_results=5, offset=0):
+def search_books(title, max_results=5):
     base_url = "https://www.googleapis.com/books/v1/volumes"
     params = {"q": f"intitle:{title}", "maxResults": max_results}
     data = safe_get(base_url, params)
