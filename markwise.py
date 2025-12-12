@@ -28,13 +28,11 @@ def safe_get(url, params=None):
 
 # Lowercase and remove punctuation
 def normalize(text):
-    """Lowercase and remove punctuation."""
     import re
     return re.sub(r"[^\w\s]", "", (text or "").lower())
 
 # Highlight exact words in text that appear in query
 def highlight_overlap(query, text):
-    """Highlight exact words in text that appear in query."""
     query_words = normalize(query).split()
     words = text.split()
     highlighted_words = []
@@ -47,7 +45,6 @@ def highlight_overlap(query, text):
 
 # Highlight words in text that partially match query words
 def highlight_partial(query, text, threshold=0.7):
-    """Highlight words in text that partially match query words."""
     query_words = normalize(query).split()
     words = text.split()
     highlighted_words = []
@@ -61,38 +58,77 @@ def highlight_partial(query, text, threshold=0.7):
             highlighted_words.append(w)
     return " ".join(highlighted_words)
 
-def search_books(title, max_results=5):
+def search_books(title, max_results=5, offset=0):
     base_url = "https://www.googleapis.com/books/v1/volumes"
     params = {"q": f"intitle:{title}", "maxResults": max_results}
     data = safe_get(base_url, params)
     return data.get("items", []) if data else [] # return a list of findings
 
-def print_book_info(results, title):
-    if not results:
-        print(f"No books found for '{title}'.\n")
-        return
-    print(f"Top results for '{title}':")
+# Convert raw Google Books API results into a list of dictionaries
+# with similarity scores and highlighted matches for the Flask app
+def process_books_for_display(results, query):
+    processed = []
     for book in results:
         info = book.get("volumeInfo", {})
-        print(f"  - Title: {info.get('title', 'N/A')}")
-        print(f"    Author(s): {', '.join(info.get('authors', ['Unknown']))}") # combine into string all authors if missing -> Unknown
-        print(f"    Publisher: {info.get('publisher', 'N/A')}")
-        print(f"    Published: {info.get('publishedDate', 'N/A')}")
-        print(f"    Preview: {info.get('previewLink', 'N/A')}") # link to book, for double checking manually by user
-        print()
+        title = info.get("title", "")
+        authors = ", ".join(info.get("authors", ["Unknown"]))
+        preview_link = info.get("previewLink", "#")
 
-def main():
-    print("Google Books Title Checker")
-    mode = input("Enter 'list' to check a preset list or 'manual' to enter your own titles: ").strip().lower()
+        # Simple similarity using SequenceMatcher
+        similarity = round(SequenceMatcher(None, query.lower(), title.lower()).ratio() * 100, 2)
+        highlighted = highlight_overlap(query, title)
 
-    if mode == "list":
-        titles = ["The Hobbit", "Frankenstein", "Divergent", "To Kill a Mockingbird"]
-    else:
-        titles = input("Enter book titles separated by commas: ").split(",")
+        processed.append({
+            "title": title,
+            "authors": authors,
+            "infoLink": preview_link,
+            "similarity": similarity,
+            "highlight": highlighted
+        })
+    return processed
 
-    for title in [t.strip() for t in titles]: # t.strip - remove extra spaces
-        results = search_books(title)
-        print_book_info(results, title)
+def get_spotify_token():
+    auth_string = f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}"
+    b64_auth = base64.b64encode(auth_string.encode()).decode()
+    headers = {"Authorization": f"Basic {b64_auth}"}
+    data = {"grant_type": "client_credentials"}
+    r = requests.post("https://accounts.spotify.com/api/token", headers=headers, data=data)
+    r.raise_for_status()
+    return r.json()["access_token"]
 
-if __name__ == "__main__":
-    main()
+# search Spotify tracks
+def search_spotify(query, limit=5, offset=0):
+    token = get_spotify_token()
+    headers = {"Authorization": f"Bearer {token}"}
+    params = {"q": query, "type": "track", "limit": limit}
+    r = requests.get("https://api.spotify.com/v1/search", headers=headers, params=params)
+    r.raise_for_status()
+    items = r.json().get("tracks", {}).get("items", [])
+    results = []
+    for it in items:
+        results.append({
+            "title": it["name"],
+            "artists": ", ".join([a["name"] for a in it["artists"]]),
+            "spotify_url": it["external_urls"]["spotify"]
+        })
+    return results
+
+# Convert raw Spotify API results into a list of dicts with similarity and highlights
+def process_spotify_for_display(results, query):
+    processed = []
+    for track in results:
+        title = track["title"]
+        artists = track["artists"]
+        url = track["spotify_url"]
+
+        similarity = round(SequenceMatcher(None, query.lower(), title.lower()).ratio() * 100, 2)
+        highlighted = highlight_partial(query, title)  # partial word match for lyrics/songs
+
+        processed.append({
+            "title": title,
+            "artists": artists,
+            "spotify_url": url,
+            "similarity": similarity,
+            "highlight": highlighted
+        })
+    return processed
