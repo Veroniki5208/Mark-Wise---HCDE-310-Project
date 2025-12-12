@@ -26,6 +26,38 @@ def safe_get(url, params=None):
         print(f"Request failed: {e}")
         return None
 
+def normalize(text):
+    """Lowercase and remove punctuation."""
+    import re
+    return re.sub(r"[^\w\s]", "", (text or "").lower())
+
+def highlight_overlap(query, text):
+    """Highlight exact words in text that appear in query."""
+    query_words = normalize(query).split()
+    words = text.split()
+    highlighted_words = []
+    for w in words:
+        if normalize(w) in query_words:
+            highlighted_words.append(f"<mark>{w}</mark>")
+        else:
+            highlighted_words.append(w)
+    return " ".join(highlighted_words)
+
+def highlight_partial(query, text, threshold=0.7):
+    """Highlight words in text that partially match query words."""
+    query_words = normalize(query).split()
+    words = text.split()
+    highlighted_words = []
+
+    for w in words:
+        nw = normalize(w)
+        match_found = any(SequenceMatcher(None, nw, q).ratio() > threshold for q in query_words)
+        if match_found:
+            highlighted_words.append(f"<mark>{w}</mark>")
+        else:
+            highlighted_words.append(w)
+    return " ".join(highlighted_words)
+
 def search_books(title, max_results=5):
     base_url = "https://www.googleapis.com/books/v1/volumes"
     params = {"q": f"intitle:{title}", "maxResults": max_results}
